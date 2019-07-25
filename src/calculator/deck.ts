@@ -1,8 +1,8 @@
 import Card, { Suit, Suits, Rank, Ranks } from './card';
 
 const defaultDeck : Card[] = ([] as Card[]).concat(
-  ...Suits.map((suit: Suit) : Card[] => 
-    Ranks.map((rank: Rank) : Card => 
+  ...Suits.map(suit => 
+    Ranks.map(rank => 
       new Card(suit, rank),
     ),
   )
@@ -12,17 +12,13 @@ export default class Deck {
   public cards : Card[] = defaultDeck.slice();
   
   public shuffle() {
-    interface SortableCard {
-      value: number,
-      card: Card,
-    };
     this.cards = this.cards
-      .map((card: Card) : SortableCard => ({
+      .map(card => ({
         value: Math.random(),
         card,
       }))
-      .sort((a: SortableCard, b:SortableCard) : number => (a.value < b.value) ? -1 : 1)
-      .map((a: SortableCard) : Card => a.card);
+      .sort((a, b) => (a.value < b.value) ? -1 : 1)
+      .map(a => a.card);
   }
 
   public remove(card: Card) {
