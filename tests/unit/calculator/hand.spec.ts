@@ -10,8 +10,30 @@ describe('Hand', () => {
   });
 
   describe('basic accessors', () => {
+    it('should calculate the number of suits', () => {
+      const hand1 = new Hand([
+        new Card(Suit.Spades, Rank.Six),
+        new Card(Suit.Hearts, Rank.Seven),
+        new Card(Suit.Spades, Rank.Eight),
+        new Card(Suit.Spades, Rank.Nine),
+        new Card(Suit.Spades, Rank.Ten)
+      ]);
+      expect(hand1.suits.length).toBe(2);
+
+      const hand2 = new Hand([
+        new Card(Suit.Spades, Rank.Six),
+        new Card(Suit.Spades, Rank.Seven),
+        new Card(Suit.Spades, Rank.Eight),
+        new Card(Suit.Spades, Rank.Nine),
+        new Card(Suit.Spades, Rank.Ten)
+      ]);
+      expect(hand2.suits.length).toBe(1);
+    });
+
     it('should find specific rank patterns', () => {
       const higherStraight = new Hand([
+        new Card(Suit.Spades, Rank.Two),
+        new Card(Suit.Spades, Rank.Five),
         new Card(Suit.Spades, Rank.Six),
         new Card(Suit.Hearts, Rank.Seven),
         new Card(Suit.Spades, Rank.Eight),
