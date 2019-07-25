@@ -1,67 +1,75 @@
 import Card, { Rank, Suit, RankNumbers } from './card';
+import Segment from './segment';
+import MatchResult from './matchResult';
+import { Hands } from './hands';
+import { sortRanks } from './utilities';
 
-export enum Hands {
-  RoyalStraightFlush = 'Royal straight flush',
-  StraightFlush = 'Straight flush',
-  FourOfAKind = 'Four of a kind',
-  FullHouse = 'Full house',
-  Flush = 'Flush',
-  Straight = 'Straight',
-  ThreeOfAKind = 'Three of a kind',
-  TwoPair = 'Two pair',
-  Pair = 'Pair',
-  HighCard = 'High card'
-};
-
-const HandRanks = [
-  Hands.HighCard,
-  Hands.Pair,
-  Hands.TwoPair,
-  Hands.ThreeOfAKind,
-  Hands.Straight,
-  Hands.Flush,
-  Hands.FullHouse,
-  Hands.FourOfAKind,
-  Hands.StraightFlush,
-  Hands.RoyalStraightFlush,
-];
-
-class Segment {
-  public constructor(public start : number, public end : number) {
-  }
-}
-
-const promoteAce = (ranks: number[]) => ranks
-  .map(r => r === RankNumbers.Ace ? RankNumbers[Rank.AceHigh] : r);
-
-const sortRanks = (ranks: number[]) =>
-  promoteAce(ranks).sort((a, b) => a < b ? 1 : -1);
-
-class MatchResult {
-  public rank: number = -1;
-  public ranks : number[];
-  public constructor(public hand : Hands, ranks : number[]) {
-    HandRanks.forEach((rankHand, index) => {
-      if (hand === rankHand) {
-        this.rank = index;
-      }
-    })
-    this.ranks = promoteAce(ranks); 
-  }
-}
-
-type MatcherType = (hand : Hand) => MatchResult | undefined;
+type MatcherType = (hand: Hand) => MatchResult | undefined;
 
 export default class Hand {
-  public match : MatchResult = new MatchResult(Hands.HighCard, []);
+  private static royalStraightFlushMatcher = (hand: Hand) =>
+    hand.straightEnd === RankNumbers[Rank.AceHigh] && hand.suits.length === 1 ?
+      new MatchResult(Hands.RoyalStraightFlush, [hand.straightEnd]) : undefined
 
-  private high : number = -1;
-  private suits : Suit[] = [];
-  private straightEnd : number = -1;
+  private static straightFlushMatcher = (hand: Hand) =>
+    hand.straightEnd > -1 && hand.suits.length === 1 ?
+      new MatchResult(Hands.StraightFlush, [hand.straightEnd]) : undefined
 
-  private rankCounts : any = {};
+  private static straightMatcher = (hand: Hand) =>
+    hand.straightEnd > -1 ?
+      new MatchResult(Hands.Straight, [hand.straightEnd]) : undefined
 
-  private matchers : MatcherType[] = [
+  private static flushMatcher = (hand: Hand) =>
+    hand.suits.length === 1 ?
+      new MatchResult(Hands.Flush, [hand.high]) : undefined
+
+  private static fullHouseMatcher = (hand: Hand) =>
+    hand.findRankCounts(3).length === 1 && hand.findRankCounts(2).length === 1 ?
+      new MatchResult(Hands.FullHouse, [
+        hand.findRankCounts(3)[0],
+        hand.findRankCounts(2)[0],
+      ]) : undefined
+
+  private static fourOfAKindMatcher = (hand: Hand) =>
+    hand.findRankCounts(4).length === 1 ?
+      new MatchResult(Hands.FourOfAKind, [
+        hand.findRankCounts(4)[0],
+        ...sortRanks(hand.findRankCounts(1)),
+      ]) : undefined
+
+  private static threeOfAKindMatcher = (hand: Hand) =>
+    hand.findRankCounts(3).length === 1 ?
+      new MatchResult(Hands.ThreeOfAKind, [
+        hand.findRankCounts(3)[0],
+        ...sortRanks(hand.findRankCounts(1)),
+      ]) : undefined
+
+  private static twoPairMatcher = (hand: Hand) =>
+    hand.findRankCounts(2).length === 2 ?
+      new MatchResult(Hands.TwoPair, [
+        ...sortRanks(hand.findRankCounts(2)),
+        ...hand.findRankCounts(1),
+      ]) : undefined
+
+  private static pairMatcher = (hand: Hand) =>
+    hand.findRankCounts(2).length === 1 ?
+      new MatchResult(Hands.Pair, [
+        ...hand.findRankCounts(2),
+        ...sortRanks(hand.findRankCounts(1)),
+      ]) : undefined
+
+  private static highCardMatcher = (hand: Hand) =>
+    new MatchResult(Hands.HighCard, sortRanks(hand.findRankCounts(1)))
+
+  public match: MatchResult = new MatchResult(Hands.HighCard, []);
+
+  private high: number = -1;
+  private suits: Suit[] = [];
+  private straightEnd: number = -1;
+
+  private rankCounts: any = {};
+
+  private matchers: MatcherType[] = [
     Hand.royalStraightFlushMatcher,
     Hand.straightFlushMatcher,
     Hand.fourOfAKindMatcher,
@@ -74,19 +82,19 @@ export default class Hand {
     Hand.highCardMatcher,
   ];
 
-  constructor(public cards : Card[]) {
+  constructor(public cards: Card[]) {
     this.cards = this.cards
       .sort((a, b) => a.rankNumber < b.rankNumber ? -1 : 1);
-   
+
     this.high = this.cards[this.cards.length - 1].rankNumber;
-    
-    const suitsHash : any = {};
-  
-    const segments : Segment[] = [];
+
+    const suitsHash: any = {};
+
+    const segments: Segment[] = [];
     let start = this.cards[0].rankNumber;
     let end = this.cards[0].rankNumber;
-   
-    this.cards.forEach(card => {
+
+    this.cards.forEach((card) => {
       // Calculate straight segments
       if (card.rankNumber - end > 1) {
         segments.push(new Segment(start, end));
@@ -109,8 +117,8 @@ export default class Hand {
 
     // Look for straights without an Ace
     segments
-      .filter(segment => (segment.end - segment.start) >= 4)
-      .forEach(segment => {
+      .filter((segment) => (segment.end - segment.start) >= 4)
+      .forEach((segment) => {
         this.straightEnd = segment.end;
       });
 
@@ -126,11 +134,11 @@ export default class Hand {
     }
 
     // Complete suit assigment
-    this.suits = Object.keys(suitsHash).map((suit : string) => suit as Suit);
+    this.suits = Object.keys(suitsHash).map((suit: string) => suit as Suit);
 
     // Match the hand
     let found = false;
-    this.matchers.forEach(matcher => {
+    this.matchers.forEach((matcher) => {
       if (!found) {
         const match = matcher(this);
         if (match) {
@@ -141,7 +149,7 @@ export default class Hand {
     });
   }
 
-  public compare(otherHand: Hand) : number {
+  public compare(otherHand: Hand): number {
     // First look for a straight rank beat (two pair beats pair)
     if (this.match.rank > otherHand.match.rank) {
       return 1;
@@ -167,80 +175,26 @@ export default class Hand {
   }
 
   public toString() {
-    return `${this.match.hand.toString()}: ${this.cards.map(c => c.toString()).join(',')}`;
+    return `${this.match.hand.toString()}: ${this.cards.map((c) => c.toString()).join(',')}`;
   }
 
-  private findRankCounts(count: number) : number[] {
+  private findRankCounts(count: number): number[] {
     return Object.keys(this.rankCounts)
-      .filter(rank => this.rankCounts[rank] === count)
-      .map(rank => parseInt(rank, 10));
+      .filter((rank) => this.rankCounts[rank] === count)
+      .map((rank) => parseInt(rank, 10));
   }
 
-  private hasRank(rank: Rank) : boolean {
-    return this.cards.filter(c => c.rank === rank).length > 0;
+  private hasRank(rank: Rank): boolean {
+    return this.cards.filter((c) => c.rank === rank).length > 0;
   }
 
-  private matchRankPattern(ranks: Rank[]) : boolean {
+  private matchRankPattern(ranks: Rank[]): boolean {
     let matched = 0;
-    ranks.forEach(r => {
+    ranks.forEach((r) => {
       if (this.hasRank(r)) {
         matched++;
       }
     });
     return matched === 5;
   }
-
-  private static royalStraightFlushMatcher = (hand : Hand) => 
-    hand.straightEnd === RankNumbers[Rank.AceHigh] && hand.suits.length === 1 ?
-      new MatchResult(Hands.RoyalStraightFlush, [hand.straightEnd]) : undefined;
-
-  private static straightFlushMatcher = (hand : Hand) => 
-    hand.straightEnd > -1 && hand.suits.length === 1 ?
-      new MatchResult(Hands.StraightFlush, [hand.straightEnd]) : undefined;
-
-  private static straightMatcher = (hand : Hand) => 
-    hand.straightEnd > -1 ?
-      new MatchResult(Hands.Straight, [hand.straightEnd]) : undefined;
-
-  private static flushMatcher = (hand : Hand) => 
-    hand.suits.length === 1 ?
-      new MatchResult(Hands.Flush, [hand.high]) : undefined;
-
-  private static fullHouseMatcher = (hand : Hand) => 
-    hand.findRankCounts(3).length === 1 && hand.findRankCounts(2).length === 1 ?
-      new MatchResult(Hands.FullHouse, [
-        hand.findRankCounts(3)[0],
-        hand.findRankCounts(2)[0]
-      ]) : undefined;
-
-  private static fourOfAKindMatcher = (hand : Hand) => 
-    hand.findRankCounts(4).length === 1 ?
-      new MatchResult(Hands.FourOfAKind, [
-        hand.findRankCounts(4)[0],
-        ...sortRanks(hand.findRankCounts(1)),
-      ]) : undefined;
-
-  private static threeOfAKindMatcher = (hand : Hand) => 
-    hand.findRankCounts(3).length === 1 ?
-      new MatchResult(Hands.ThreeOfAKind, [
-        hand.findRankCounts(3)[0],
-        ...sortRanks(hand.findRankCounts(1))
-      ]) : undefined;
-
-  private static twoPairMatcher = (hand : Hand) => 
-    hand.findRankCounts(2).length === 2 ?
-      new MatchResult(Hands.TwoPair, [
-        ...sortRanks(hand.findRankCounts(2)),
-        ...hand.findRankCounts(1),
-      ]) : undefined;
-
-  private static pairMatcher = (hand : Hand) => 
-    hand.findRankCounts(2).length === 1 ?
-      new MatchResult(Hands.Pair, [
-        ...hand.findRankCounts(2),
-        ...sortRanks(hand.findRankCounts(1)),
-      ]) : undefined;
-
-  private static highCardMatcher = (hand : Hand) => 
-    new MatchResult(Hands.HighCard, sortRanks(hand.findRankCounts(1)));
 }

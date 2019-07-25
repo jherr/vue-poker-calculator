@@ -13,7 +13,7 @@ export enum Rank {
   Queen = 'Queen',
   King = 'King',
   AceHigh = 'Ace high',
-};
+}
 
 export const Ranks: Rank[] = [
   Rank.Ace,
@@ -37,7 +37,7 @@ export enum Suit {
   Spades = 'Spades',
   Clubs = 'Clubs',
   Diamonds = 'Diamonds',
-};
+}
 
 export const Suits: Suit[] = [
   Suit.Hearts,
@@ -46,29 +46,29 @@ export const Suits: Suit[] = [
   Suit.Diamonds,
 ];
 
-export const RankNumbers : any = {};
+export const RankNumbers: any = {};
 Ranks.forEach((rank, i) => RankNumbers[rank.toString()] = i);
 
 export default class Card {
-  public rankNumber : number = 0;
+  public rankNumber: number = 0;
 
   constructor(public suit: Suit, public rank: Rank) {
     this.rankNumber = RankNumbers[rank.toString()];
   }
 
-  public isSameSuit(card: Card) : boolean {
+  public isSameSuit(card: Card): boolean {
     return card.suit === this.suit;
   }
 
-  public isSameRank(card: Card) : boolean {
+  public isSameRank(card: Card): boolean {
     return card.rank === this.rank;
   }
 
-  public isSame(card: Card) : boolean {
+  public isSame(card: Card): boolean {
     return card.rank === this.rank && card.suit === this.suit;
   }
 
-  public toString() : string {
+  public toString(): string {
     return `${this.rank} of ${this.suit}`;
   }
 }

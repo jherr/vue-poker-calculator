@@ -1,4 +1,5 @@
-import Hand, { Hands } from '@/calculator/hand';
+import Hand from '@/calculator/hand';
+import { Hands } from '@/calculator/hands';
 import Deck from '@/calculator/deck';
 import Card, { Suit, Rank } from '@/calculator/card';
 
@@ -116,14 +117,14 @@ describe('Hand', () => {
         new Card(Suit.Spades, Rank.Queen),
         new Card(Suit.Spades, Rank.King),
         new Card(Suit.Spades, Rank.Eight),
-        new Card(Suit.Spades, Rank.Ten)
+        new Card(Suit.Spades, Rank.Ten),
       ]);
       const handWithHigh = new Hand([
         new Card(Suit.Spades, Rank.Jack),
         new Card(Suit.Spades, Rank.Queen),
         new Card(Suit.Spades, Rank.King),
         new Card(Suit.Spades, Rank.Ace),
-        new Card(Suit.Spades, Rank.Ten)
+        new Card(Suit.Spades, Rank.Ten),
       ]);
       expect(hand.compare(handWithHigh)).toBe(-1);
       expect(handWithHigh.compare(hand)).toBe(1);
@@ -138,7 +139,7 @@ describe('Hand', () => {
         new Card(Suit.Spades, Rank.Queen),
         new Card(Suit.Spades, Rank.King),
         new Card(Suit.Spades, Rank.Ace),
-        new Card(Suit.Spades, Rank.Ten)
+        new Card(Suit.Spades, Rank.Ten),
       ]);
       expect(hand.match.hand).toBe(Hands.RoyalStraightFlush);
       expect(hand.match.rank).toBe(9);
@@ -270,7 +271,9 @@ describe('Hand', () => {
       expect(hand2.match.hand).toBe(Hands.ThreeOfAKind);
       expect(hand2.match.ranks).toEqual([10, 9, 8]);
       expect(hand2.match.rank).toBe(3);
-      expect(hand2.toString()).toBe('Three of a kind: 9 of Spades,10 of Clubs,Jack of Diamonds,Jack of Spades,Jack of Hearts');
+      expect(hand2.toString()).toBe(
+        'Three of a kind: 9 of Spades,10 of Clubs,Jack of Diamonds,Jack of Spades,Jack of Hearts',
+      );
     });
   });
 });
