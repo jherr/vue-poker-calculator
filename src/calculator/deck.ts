@@ -2,9 +2,11 @@ import Card, { Suit, Suits, Rank, Ranks } from './card';
 
 const defaultDeck : Card[] = ([] as Card[]).concat(
   ...Suits.map(suit => 
-    Ranks.map(rank => 
-      new Card(suit, rank),
-    ),
+    Ranks
+      .filter(rank => rank !== Rank.AceHigh)
+      .map(rank => 
+        new Card(suit, rank),
+      ),
   )
 );
 

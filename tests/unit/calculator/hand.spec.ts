@@ -1,4 +1,4 @@
-import Hand from '@/calculator/hand';
+import Hand, { Hands } from '@/calculator/hand';
 import Deck from '@/calculator/deck';
 import Card, { Suit, Rank } from '@/calculator/card';
 
@@ -9,135 +9,146 @@ describe('Hand', () => {
     expect(hand.cards.length).toBe(5);
   });
 
-  describe('basic accessors', () => {
-    it('should calculate the number of suits', () => {
-      const hand1 = new Hand([
-        new Card(Suit.Spades, Rank.Six),
-        new Card(Suit.Hearts, Rank.Seven),
-        new Card(Suit.Spades, Rank.Eight),
-        new Card(Suit.Spades, Rank.Nine),
+  describe('match all the hand types', () => {
+    it('should find a royal straight flush', () => {
+      const hand = new Hand([
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Queen),
+        new Card(Suit.Spades, Rank.King),
+        new Card(Suit.Spades, Rank.Ace),
         new Card(Suit.Spades, Rank.Ten)
       ]);
-      expect(hand1.suits.length).toBe(2);
-
-      const hand2 = new Hand([
-        new Card(Suit.Spades, Rank.Six),
-        new Card(Suit.Spades, Rank.Seven),
-        new Card(Suit.Spades, Rank.Eight),
-        new Card(Suit.Spades, Rank.Nine),
-        new Card(Suit.Spades, Rank.Ten)
-      ]);
-      expect(hand2.suits.length).toBe(1);
+      expect(hand.match.hand).toBe(Hands.RoyalStraightFlush);
+      expect(hand.match.rank).toBe(9);
     });
 
-    it('should find specific rank patterns', () => {
-      const higherStraight = new Hand([
-        new Card(Suit.Spades, Rank.Two),
-        new Card(Suit.Spades, Rank.Five),
-        new Card(Suit.Spades, Rank.Six),
-        new Card(Suit.Hearts, Rank.Seven),
-        new Card(Suit.Spades, Rank.Eight),
+    it('should find a straight flush', () => {
+      const hand = new Hand([
         new Card(Suit.Spades, Rank.Nine),
-        new Card(Suit.Spades, Rank.Ten)
-      ]);
-      expect(higherStraight.matchRankPattern([
-        Rank.Six,
-        Rank.Seven,
-        Rank.Eight,
-        Rank.Nine,
-        Rank.Ten,
-      ])).toBe(true);
-      expect(higherStraight.matchRankPattern([
-        Rank.Three,
-        Rank.Seven,
-        Rank.Eight,
-        Rank.Nine,
-        Rank.Ten,
-      ])).toBe(false);
-
-      const royalStraight = new Hand([
         new Card(Suit.Spades, Rank.Ten),
         new Card(Suit.Spades, Rank.Jack),
-        new Card(Suit.Hearts, Rank.Queen),
+        new Card(Suit.Spades, Rank.Queen),
         new Card(Suit.Spades, Rank.King),
-        new Card(Suit.Spades, Rank.Ace)
       ]);
-      expect(royalStraight.matchRankPattern([
-        Rank.Ten,
-        Rank.Jack,
-        Rank.Queen,
-        Rank.King,
-        Rank.Ace,
-      ])).toBe(true);
-      expect(royalStraight.matchRankPattern([
-        Rank.Three,
-        Rank.Seven,
-        Rank.Eight,
-        Rank.Nine,
-        Rank.Ten,
-      ])).toBe(false);
+      expect(hand.match.hand).toBe(Hands.StraightFlush);
+      expect(hand.match.ranks).toEqual([12]);
+      expect(hand.match.rank).toBe(8);
     });
 
-    it('should find low and high', () => {
-      const pair = new Hand([
-        new Card(Suit.Spades, Rank.Ace),
-        new Card(Suit.Hearts, Rank.Ace),
-        new Card(Suit.Spades, Rank.Two),
-        new Card(Suit.Spades, Rank.Three),
-        new Card(Suit.Spades, Rank.Four)
-      ]);
-      expect(pair.low).toBe(0);
-      expect(pair.high).toBe(3);
-
-      const higherStraight = new Hand([
-        new Card(Suit.Spades, Rank.Six),
-        new Card(Suit.Hearts, Rank.Seven),
-        new Card(Suit.Spades, Rank.Eight),
+    it('should find a straight', () => {
+      const hand = new Hand([
         new Card(Suit.Spades, Rank.Nine),
-        new Card(Suit.Spades, Rank.Ten)
+        new Card(Suit.Hearts, Rank.Ten),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Queen),
+        new Card(Suit.Spades, Rank.King),
       ]);
-      expect(higherStraight.low).toBe(5);
-      expect(higherStraight.high).toBe(9);
+      expect(hand.match.hand).toBe(Hands.Straight);
+      expect(hand.match.ranks).toEqual([12]);
+      expect(hand.match.rank).toBe(4);
     });
 
-    it('should find pairs, threes of a kind, etc.', () => {
-      const pair = new Hand([
-        new Card(Suit.Spades, Rank.Ace),
-        new Card(Suit.Hearts, Rank.Ace),
-        new Card(Suit.Spades, Rank.Two),
-        new Card(Suit.Spades, Rank.Three),
-        new Card(Suit.Spades, Rank.Four)
+    it('should find a flush', () => {
+      const hand = new Hand([
+        new Card(Suit.Spades, Rank.Eight),
+        new Card(Suit.Spades, Rank.Ten),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Queen),
+        new Card(Suit.Spades, Rank.King),
       ]);
-      expect(pair.findRankCounts(1)).toEqual([1, 2, 3]);
-      expect(pair.findRankCounts(2)).toEqual([0]);
-      expect(pair.findRankCounts(3)).toEqual([]);
-      expect(pair.findRankCounts(4)).toEqual([]);
+      expect(hand.match.hand).toBe(Hands.Flush);
+      expect(hand.match.ranks).toEqual([12]);
+      expect(hand.match.rank).toBe(5);
+    });
 
-      expect(pair.toString()).toBe('Ace of Hearts,Ace of Spades,2 of Spades,3 of Spades,4 of Spades');
-
-      const three = new Hand([
-        new Card(Suit.Spades, Rank.Ace),
-        new Card(Suit.Hearts, Rank.Ace),
-        new Card(Suit.Clubs, Rank.Ace),
-        new Card(Suit.Spades, Rank.Two),
-        new Card(Suit.Spades, Rank.Three)
+    it('should find a full house', () => {
+      const hand = new Hand([
+        new Card(Suit.Hearts, Rank.Nine),
+        new Card(Suit.Hearts, Rank.Nine),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
       ]);
-      expect(three.findRankCounts(1)).toEqual([1, 2]);
-      expect(three.findRankCounts(2)).toEqual([]);
-      expect(three.findRankCounts(3)).toEqual([0]);
-      expect(three.findRankCounts(4)).toEqual([]);
+      expect(hand.match.hand).toBe(Hands.FullHouse);
+      expect(hand.match.ranks).toEqual([10, 8]);
+      expect(hand.match.rank).toBe(6);
+    });
 
-      const four = new Hand([
-        new Card(Suit.Spades, Rank.Ace),
+    it('should find a high card', () => {
+      const hand = new Hand([
         new Card(Suit.Hearts, Rank.Ace),
-        new Card(Suit.Clubs, Rank.Ace),
-        new Card(Suit.Diamonds, Rank.Ace),
-        new Card(Suit.Spades, Rank.Two)
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.King),
+        new Card(Suit.Clubs, Rank.Four),
+        new Card(Suit.Spades, Rank.Nine),
       ]);
-      expect(four.findRankCounts(1)).toEqual([1]);
-      expect(four.findRankCounts(2)).toEqual([]);
-      expect(four.findRankCounts(3)).toEqual([]);
-      expect(four.findRankCounts(4)).toEqual([0]);
+      expect(hand.match.hand).toBe(Hands.HighCard);
+      expect(hand.match.ranks).toEqual([13, 12, 10, 8, 3]);
+      expect(hand.match.rank).toBe(0);
+    });
+
+    it('should find a pair', () => {
+      const hand = new Hand([
+        new Card(Suit.Hearts, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.King),
+        new Card(Suit.Clubs, Rank.Four),
+        new Card(Suit.Spades, Rank.Nine),
+      ]);
+      expect(hand.match.hand).toBe(Hands.Pair);
+      expect(hand.match.ranks).toEqual([10, 12, 8, 3]);
+      expect(hand.match.rank).toBe(1);
+    });
+
+    it('should find two pair', () => {
+      const hand = new Hand([
+        new Card(Suit.Hearts, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.King),
+        new Card(Suit.Clubs, Rank.King),
+        new Card(Suit.Spades, Rank.Nine),
+      ]);
+      expect(hand.match.hand).toBe(Hands.TwoPair);
+      expect(hand.match.ranks).toEqual([12, 10, 8]);
+      expect(hand.match.rank).toBe(2);
+    });
+
+    it('should find four of a kind', () => {
+      const hand = new Hand([
+        new Card(Suit.Hearts, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.Jack),
+        new Card(Suit.Clubs, Rank.Jack),
+        new Card(Suit.Spades, Rank.Nine),
+      ]);
+      expect(hand.match.hand).toBe(Hands.FourOfAKind);
+      expect(hand.match.ranks).toEqual([10]);
+      expect(hand.match.rank).toBe(7);
+    });
+
+    it('should find three of a kind', () => {
+      const hand = new Hand([
+        new Card(Suit.Hearts, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.Jack),
+        new Card(Suit.Clubs, Rank.Ten),
+        new Card(Suit.Spades, Rank.Nine),
+      ]);
+      expect(hand.match.hand).toBe(Hands.ThreeOfAKind);
+      expect(hand.match.ranks).toEqual([10, 9, 8]);
+      expect(hand.match.rank).toBe(3);
+
+      const hand2 = new Hand([
+        new Card(Suit.Hearts, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.Jack),
+        new Card(Suit.Spades, Rank.Nine),
+        new Card(Suit.Clubs, Rank.Ten),
+      ]);
+      expect(hand2.match.hand).toBe(Hands.ThreeOfAKind);
+      expect(hand2.match.ranks).toEqual([10, 9, 8]);
+      expect(hand2.match.rank).toBe(3);
+      expect(hand2.toString()).toBe('Three of a kind: 9 of Spades,10 of Clubs,Jack of Diamonds,Jack of Spades,Jack of Hearts');
     });
   });
 });
