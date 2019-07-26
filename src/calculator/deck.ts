@@ -33,6 +33,6 @@ export default class Deck {
   }
 
   public draw(count: number): Card[] {
-    return this.cards.slice(0, count);
+    return this.cards.splice(0, count);
   }
 }

@@ -3,25 +3,32 @@ import Hand from './hand';
 import Deck from './deck';
 
 export default class Table {
+  public hands: Hand[] = [];
+  public won: boolean = false;
+  public communityCards: Card[] = [];
+
   constructor(baseCards: Card[], players: number = 9) {
     const deck = new Deck();
     deck.shuffle();
 
     baseCards.forEach((card) => deck.remove(card));
 
-    const communityCards = deck.draw(5);
+    this.communityCards = deck.draw(5);
 
-    const playerHand = new Hand([
+    this.hands.push(new Hand([
       ...baseCards,
-      ...communityCards,
-    ]);
+      ...this.communityCards,
+    ], true));
 
-    const playerHands: Hand[] = [];
     for (let p = 0; p < players - 1; p++) {
-      playerHands.push(new Hand([
+      this.hands.push(new Hand([
         ...deck.draw(2),
-        ...communityCards,
+        ...this.communityCards,
       ]));
     }
+
+    this.hands = this.hands.sort((a, b) => b.compare(a));
+
+    this.won = this.hands[0].playerHand === true;
   }
 }

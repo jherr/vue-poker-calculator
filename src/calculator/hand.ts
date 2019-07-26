@@ -34,28 +34,28 @@ export default class Hand {
     hand.findRankCounts(4).length === 1 ?
       new MatchResult(Hands.FourOfAKind, [
         hand.findRankCounts(4)[0],
-        ...sortRanks(hand.findRankCounts(1)),
+        ...sortRanks(hand.findRankCounts(1)).slice(0, 1),
       ]) : undefined
 
   private static threeOfAKindMatcher = (hand: Hand) =>
     hand.findRankCounts(3).length === 1 ?
       new MatchResult(Hands.ThreeOfAKind, [
         hand.findRankCounts(3)[0],
-        ...sortRanks(hand.findRankCounts(1)),
+        ...sortRanks(hand.findRankCounts(1)).slice(0, 2),
       ]) : undefined
 
   private static twoPairMatcher = (hand: Hand) =>
     hand.findRankCounts(2).length === 2 ?
       new MatchResult(Hands.TwoPair, [
         ...sortRanks(hand.findRankCounts(2)),
-        ...hand.findRankCounts(1),
+        ...hand.findRankCounts(1).slice(0, 1),
       ]) : undefined
 
   private static pairMatcher = (hand: Hand) =>
     hand.findRankCounts(2).length === 1 ?
       new MatchResult(Hands.Pair, [
         ...hand.findRankCounts(2),
-        ...sortRanks(hand.findRankCounts(1)),
+        ...sortRanks(hand.findRankCounts(1)).slice(0, 3),
       ]) : undefined
 
   private static highCardMatcher = (hand: Hand) =>
@@ -82,7 +82,7 @@ export default class Hand {
     Hand.highCardMatcher,
   ];
 
-  constructor(public cards: Card[]) {
+  constructor(public cards: Card[], public playerHand: boolean = false) {
     this.cards = this.cards
       .sort((a, b) => a.rankNumber < b.rankNumber ? -1 : 1);
 
