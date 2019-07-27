@@ -17,13 +17,13 @@ export default class Table {
 
     this.hands.push(new Hand([
       ...baseCards,
-      ...this.communityCards,
+      ...this.communityCards.slice(),
     ], true));
 
     for (let p = 0; p < players - 1; p++) {
       this.hands.push(new Hand([
         ...deck.draw(2),
-        ...this.communityCards,
+        ...this.communityCards.slice(),
       ]));
     }
 
