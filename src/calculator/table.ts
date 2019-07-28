@@ -1,6 +1,7 @@
 import Card from './card';
 import Hand from './hand';
 import Deck from './deck';
+import { cloneDeep } from 'lodash';
 
 export default class Table {
   public hands: Hand[] = [];
@@ -16,14 +17,14 @@ export default class Table {
     this.communityCards = deck.draw(5);
 
     this.hands.push(new Hand([
-      ...baseCards,
-      ...this.communityCards.slice(),
+      ...cloneDeep(baseCards),
+      ...cloneDeep(this.communityCards),
     ], true));
 
     for (let p = 0; p < players - 1; p++) {
       this.hands.push(new Hand([
-        ...deck.draw(2),
-        ...this.communityCards.slice(),
+        ...cloneDeep(deck.draw(2).slice()),
+        ...cloneDeep(this.communityCards),
       ]));
     }
 

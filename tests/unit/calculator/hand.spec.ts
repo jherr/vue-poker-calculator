@@ -143,6 +143,9 @@ describe('Hand', () => {
       ]);
       expect(hand.match.hand).toBe(Hands.RoyalStraightFlush);
       expect(hand.match.rank).toBe(9);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, true,
+      ]);
     });
 
     it('should find a straight flush', () => {
@@ -156,19 +159,56 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.StraightFlush);
       expect(hand.match.ranks).toEqual([12]);
       expect(hand.match.rank).toBe(8);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, true,
+      ]);
+
+      const hand2 = new Hand([
+        new Card(Suit.Spades, Rank.Nine),
+        new Card(Suit.Spades, Rank.Ten),
+        new Card(Suit.Clubs, Rank.Ten),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Queen),
+        new Card(Suit.Spades, Rank.King),
+      ]);
+      expect(hand2.match.hand).toBe(Hands.StraightFlush);
+      expect(hand2.match.ranks).toEqual([12]);
+      expect(hand2.match.rank).toBe(8);
+      expect(hand2.cards.map((c) => c.used)).toEqual([
+        true, true, false, true, true, true,
+      ]);
     });
 
     it('should find a straight', () => {
       const hand = new Hand([
         new Card(Suit.Spades, Rank.Nine),
-        new Card(Suit.Hearts, Rank.Ten),
         new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Hearts, Rank.Ten),
         new Card(Suit.Spades, Rank.Queen),
         new Card(Suit.Spades, Rank.King),
       ]);
       expect(hand.match.hand).toBe(Hands.Straight);
       expect(hand.match.ranks).toEqual([12]);
       expect(hand.match.rank).toBe(4);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, true,
+      ]);
+
+      const sevenCardStraight = new Hand([
+        new Card(Suit.Spades, Rank.Eight),
+        new Card(Suit.Spades, Rank.Seven),
+        new Card(Suit.Spades, Rank.Nine),
+        new Card(Suit.Hearts, Rank.Ten),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Spades, Rank.Queen),
+        new Card(Suit.Spades, Rank.King),
+      ]);
+      expect(sevenCardStraight.match.hand).toBe(Hands.Flush);
+      expect(sevenCardStraight.match.ranks).toEqual([12]);
+      expect(sevenCardStraight.match.rank).toBe(5);
+      expect(sevenCardStraight.cards.map((c) => c.used)).toEqual([
+        true, false, true, false, true, true, true,
+      ]);
     });
 
     it('should find a flush', () => {
@@ -184,6 +224,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.Flush);
       expect(hand.match.ranks).toEqual([12]);
       expect(hand.match.rank).toBe(5);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        false, false, true, true, true, true, true,
+      ]);
     });
 
     it('should find a full house', () => {
@@ -197,6 +240,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.FullHouse);
       expect(hand.match.ranks).toEqual([10, 8]);
       expect(hand.match.rank).toBe(6);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, true,
+      ]);
     });
 
     it('should find a high card', () => {
@@ -210,6 +256,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.HighCard);
       expect(hand.match.ranks).toEqual([13, 12, 10, 8, 3]);
       expect(hand.match.rank).toBe(0);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, false, false, false, false,
+      ]);
     });
 
     it('should find a pair', () => {
@@ -223,6 +272,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.Pair);
       expect(hand.match.ranks).toEqual([10, 12, 8, 3]);
       expect(hand.match.rank).toBe(1);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, false, false, false,
+      ]);
 
       const sevenCardPair = new Hand([
         new Card(Suit.Hearts, Rank.Ace),
@@ -236,6 +288,9 @@ describe('Hand', () => {
       expect(sevenCardPair.match.hand).toBe(Hands.Pair);
       expect(sevenCardPair.match.ranks).toEqual([13, 10, 8, 6]);
       expect(sevenCardPair.match.rank).toBe(1);
+      expect(sevenCardPair.cards.map((c) => c.used)).toEqual([
+        true, true, false, false, false, false, false,
+      ]);
     });
 
     it('should find two pair', () => {
@@ -249,6 +304,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.TwoPair);
       expect(hand.match.ranks).toEqual([12, 10, 8]);
       expect(hand.match.rank).toBe(2);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, false,
+      ]);
     });
 
     it('should find four of a kind', () => {
@@ -264,6 +322,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.FourOfAKind);
       expect(hand.match.ranks).toEqual([10, 8]);
       expect(hand.match.rank).toBe(7);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, false, false, false,
+      ]);
     });
 
     it('should find three of a kind', () => {
@@ -279,6 +340,9 @@ describe('Hand', () => {
       expect(hand.match.hand).toBe(Hands.ThreeOfAKind);
       expect(hand.match.ranks).toEqual([10, 9, 8]);
       expect(hand.match.rank).toBe(3);
+      expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, false, false, false, false,
+      ]);
 
       const hand2 = new Hand([
         new Card(Suit.Hearts, Rank.Jack),
@@ -291,8 +355,11 @@ describe('Hand', () => {
       expect(hand2.match.ranks).toEqual([10, 9, 8]);
       expect(hand2.match.rank).toBe(3);
       expect(hand2.toString()).toBe(
-        'Three of a kind: 9 of Spades,10 of Clubs,Jack of Diamonds,Jack of Spades,Jack of Hearts',
+        'Three of a kind: Jack of Hearts,Jack of Spades,Jack of Diamonds,9 of Spades,10 of Clubs',
       );
+      expect(hand2.cards.map((c) => c.used)).toEqual([
+        true, true, true, false, false,
+      ]);
     });
   });
 });

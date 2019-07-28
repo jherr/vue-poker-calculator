@@ -21,8 +21,8 @@
 import Vue from 'vue';
 import Hand from '@/calculator/hand';
 import Card from '@/calculator/card';
-import SmallCard from '@/components/SmallCard';
-import HandRow from '@/components/HandRow';
+import SmallCard from '@/components/SmallCard.vue';
+import HandRow from '@/components/HandRow.vue';
 
 export default Vue.extend({
   name: 'CurrentTable',

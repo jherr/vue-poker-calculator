@@ -7,85 +7,14 @@ import { sortRanks } from './utilities';
 type MatcherType = (hand: Hand) => MatchResult | undefined;
 
 export default class Hand {
-  private static royalStraightFlushMatcher = (hand: Hand) =>
-    hand.straightEnd === RankNumbers[Rank.AceHigh] && hand.suits.length === 1 ?
-      new MatchResult(Hands.RoyalStraightFlush, [hand.straightEnd]) : undefined
-
-  private static straightFlushMatcher = (hand: Hand) =>
-    hand.straightEnd > -1 && hand.suits.length === 1 ?
-      new MatchResult(Hands.StraightFlush, [hand.straightEnd]) : undefined
-
-  private static straightMatcher = (hand: Hand) =>
-    hand.straightEnd > -1 ?
-      new MatchResult(Hands.Straight, [hand.straightEnd]) : undefined
-
-  private static flushMatcher = (hand: Hand) =>
-    hand.suits.length === 1 ?
-      new MatchResult(Hands.Flush, [hand.high]) : undefined
-
-  private static fullHouseMatcher = (hand: Hand) =>
-    hand.findRankCounts(3).length === 1 && hand.findRankCounts(2).length === 1 ?
-      new MatchResult(Hands.FullHouse, [
-        hand.findRankCounts(3)[0],
-        hand.findRankCounts(2)[0],
-      ]) : undefined
-
-  private static fourOfAKindMatcher = (hand: Hand) =>
-    hand.findRankCounts(4).length === 1 ?
-      new MatchResult(Hands.FourOfAKind, [
-        hand.findRankCounts(4)[0],
-        ...sortRanks(hand.findRankCounts(1)).slice(0, 1),
-      ]) : undefined
-
-  private static threeOfAKindMatcher = (hand: Hand) =>
-    hand.findRankCounts(3).length === 1 ?
-      new MatchResult(Hands.ThreeOfAKind, [
-        hand.findRankCounts(3)[0],
-        ...sortRanks(hand.findRankCounts(1)).slice(0, 2),
-      ]) : undefined
-
-  private static twoPairMatcher = (hand: Hand) =>
-    hand.findRankCounts(2).length === 2 ?
-      new MatchResult(Hands.TwoPair, [
-        ...sortRanks(hand.findRankCounts(2)),
-        ...hand.findRankCounts(1).slice(0, 1),
-      ]) : undefined
-
-  private static pairMatcher = (hand: Hand) =>
-    hand.findRankCounts(2).length === 1 ?
-      new MatchResult(Hands.Pair, [
-        ...hand.findRankCounts(2),
-        ...sortRanks(hand.findRankCounts(1)).slice(0, 3),
-      ]) : undefined
-
-  private static highCardMatcher = (hand: Hand) =>
-    new MatchResult(Hands.HighCard, sortRanks(hand.findRankCounts(1)))
-
   public match: MatchResult = new MatchResult(Hands.HighCard, []);
 
   private high: number = -1;
   private suits: Suit[] = [];
   private straightEnd: number = -1;
-
   private rankCounts: any = {};
 
-  private matchers: MatcherType[] = [
-    Hand.royalStraightFlushMatcher,
-    Hand.straightFlushMatcher,
-    Hand.fourOfAKindMatcher,
-    Hand.fullHouseMatcher,
-    Hand.flushMatcher,
-    Hand.straightMatcher,
-    Hand.threeOfAKindMatcher,
-    Hand.twoPairMatcher,
-    Hand.pairMatcher,
-    Hand.highCardMatcher,
-  ];
-
   constructor(public cards: Card[], public playerHand: boolean = false) {
-    this.cards = this.cards
-      .sort((a, b) => a.rankNumber < b.rankNumber ? -1 : 1);
-
     this.high = this.cards[this.cards.length - 1].rankNumber;
 
     const suitsHash: any = {};
@@ -94,7 +23,10 @@ export default class Hand {
     let start = this.cards[0].rankNumber;
     let end = this.cards[0].rankNumber;
 
-    this.cards.forEach((card) => {
+    const sortedCards = this.cards
+      .slice()
+      .sort((a, b) => a.rankNumber < b.rankNumber ? -1 : 1);
+    sortedCards.forEach((card) => {
       // Calculate straight segments
       if (card.rankNumber - end > 1) {
         segments.push(new Segment(start, end));
@@ -111,7 +43,10 @@ export default class Hand {
       this.rankCounts[card.rankNumber] += 1;
 
       // Check to see how many suits are represented
-      suitsHash[card.suit.toString()] = true;
+      if (suitsHash[card.suit.toString()] === undefined) {
+        suitsHash[card.suit.toString()] = 0;
+      }
+      suitsHash[card.suit.toString()] += 1;
     });
     segments.push(new Segment(start, end));
 
@@ -134,19 +69,12 @@ export default class Hand {
     }
 
     // Complete suit assigment
-    this.suits = Object.keys(suitsHash).map((suit: string) => suit as Suit);
+    this.suits = Object.keys(suitsHash)
+      .filter((suit: string) => suitsHash[suit] > 4)
+      .map((suit: string) => suit as Suit);
 
-    // Match the hand
-    let found = false;
-    this.matchers.forEach((matcher) => {
-      if (!found) {
-        const match = matcher(this);
-        if (match) {
-          this.match = match;
-          found = true;
-        }
-      }
-    });
+    this.cards.forEach((c) => c.used = false);
+    this.findMatch();
   }
 
   public compare(otherHand: Hand): number {
@@ -196,5 +124,187 @@ export default class Hand {
       }
     });
     return matched === 5;
+  }
+
+  private findMatch() {
+    this.royalStraightFlushMatcher();
+    this.straightFlushMatcher();
+    this.fourOfAKindMatcher();
+    this.fullHouseMatcher();
+    this.flushMatcher();
+    this.straightMatcher();
+    this.threeOfAKindMatcher();
+    this.twoPairMatcher();
+    this.pairMatcher();
+    this.highCardMatcher();
+  }
+
+  /**
+   * See if all the cards in the straights also have cards that are in-suit
+   */
+  private isStraightAlsoFlush(): boolean {
+    const usedRank: any = {};
+    for (let r = this.straightEnd - 4; r < this.straightEnd; r += 1) {
+      usedRank[r] = false;
+    }
+    this.cards.forEach((card) => {
+      const adjustedNumber =
+        card.rankNumber === 0 ? RankNumbers[Rank.AceHigh] : card.rankNumber;
+      if (
+        adjustedNumber > this.straightEnd - 5 &&
+        card.suit === this.suits[0]
+      ) {
+        usedRank[adjustedNumber] = true;
+      }
+    });
+    let hasAllInSuits = true;
+    Object.keys(usedRank).forEach((rank: string) => {
+      if (usedRank[rank] === false) {
+        hasAllInSuits = false;
+      }
+    });
+    return hasAllInSuits;
+  }
+
+  private royalStraightFlushMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.straightEnd === RankNumbers[Rank.AceHigh] && this.suits.length === 1 && this.isStraightAlsoFlush()) {
+        this.match = new MatchResult(Hands.RoyalStraightFlush, [this.straightEnd]);
+        this.markStraightUsed();
+      }
+    }
+  }
+
+  private straightFlushMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.straightEnd > -1 && this.suits.length === 1 && this.isStraightAlsoFlush()) {
+        this.match = new MatchResult(Hands.StraightFlush, [this.straightEnd]);
+        this.markStraightUsed();
+      }
+    }
+  }
+
+  private straightMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.straightEnd > -1) {
+        this.match = new MatchResult(Hands.Straight, [this.straightEnd]);
+        this.markStraightUsed();
+      }
+    }
+  }
+
+  private flushMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.suits.length === 1) {
+        this.match = new MatchResult(Hands.Flush, [this.high]);
+        this.markFlush(this.suits[0]);
+      }
+    }
+  }
+
+  private fullHouseMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.findRankCounts(3).length === 1 && this.findRankCounts(2).length === 1) {
+        this.match = new MatchResult(Hands.FullHouse, [
+          this.findRankCounts(3)[0],
+          this.findRankCounts(2)[0],
+        ]);
+        this.markUsedByRankNumber(this.findRankCounts(3)[0]);
+        this.markUsedByRankNumber(this.findRankCounts(2)[0]);
+      }
+    }
+  }
+
+  private fourOfAKindMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.findRankCounts(4).length === 1) {
+        this.match = new MatchResult(Hands.FourOfAKind, [
+          this.findRankCounts(4)[0],
+          ...sortRanks(this.findRankCounts(1)).slice(0, 1),
+        ]);
+        this.markUsedByRankNumber(this.findRankCounts(4)[0]);
+      }
+    }
+  }
+
+  private threeOfAKindMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.findRankCounts(3).length === 1) {
+        this.match = new MatchResult(Hands.ThreeOfAKind, [
+          this.findRankCounts(3)[0],
+          ...sortRanks(this.findRankCounts(1)).slice(0, 2),
+        ]);
+        this.markUsedByRankNumber(this.findRankCounts(3)[0]);
+      }
+    }
+  }
+
+  private twoPairMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.findRankCounts(2).length === 2) {
+        this.match = new MatchResult(Hands.TwoPair, [
+          ...sortRanks(this.findRankCounts(2)),
+          ...this.findRankCounts(1).slice(0, 1),
+        ]);
+        this.markUsedByRankNumber(this.findRankCounts(2)[0]);
+        this.markUsedByRankNumber(this.findRankCounts(2)[1]);
+      }
+    }
+  }
+
+  private pairMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      if (this.findRankCounts(2).length === 1) {
+        this.match = new MatchResult(Hands.Pair, [
+          ...this.findRankCounts(2),
+          ...sortRanks(this.findRankCounts(1)).slice(0, 3),
+        ]);
+        this.markUsedByRankNumber(this.findRankCounts(2)[0]);
+      }
+    }
+  }
+
+  private highCardMatcher() {
+    if (this.match.hand === Hands.HighCard) {
+      this.match = new MatchResult(Hands.HighCard, sortRanks(this.findRankCounts(1)));
+      this.markUsedByRankNumber(this.findRankCounts(1)[0]);
+    }
+  }
+
+  private markFlush(suit: Suit) {
+    let count = 0;
+    const sortedCards = this.cards
+      .slice()
+      .sort((a, b) => a.rankNumber < b.rankNumber ? 1 : -1);
+    sortedCards.forEach((card) => {
+      if (card.suit === suit && count < 5) {
+        card.used = true;
+        count += 1;
+      }
+    });
+  }
+
+  private markStraightUsed() {
+    const usedRank: any = {};
+    this.cards.forEach((card) => {
+      const adjustedNumber =
+        card.rankNumber === 0 ? RankNumbers[Rank.AceHigh] : card.rankNumber;
+      if (
+        adjustedNumber >= (this.straightEnd - 4) &&
+        adjustedNumber <= this.straightEnd &&
+        !usedRank[adjustedNumber]
+      ) {
+        card.used = true;
+        usedRank[adjustedNumber] = true;
+      }
+    });
+  }
+
+  private markUsedByRankNumber(rank: number) {
+    this.cards.forEach((card) => {
+      if (card.rankNumber === rank) {
+        card.used = true;
+      }
+    });
   }
 }

@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Card from '@/calculator/card';
-import SmallCard from '@/components/SmallCard';
+import SmallCard from '@/components/SmallCard.vue';
 
 export default Vue.extend({
   props: ['hand'],

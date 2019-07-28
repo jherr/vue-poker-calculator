@@ -52,7 +52,11 @@ Ranks.forEach((rank, i) => RankNumbers[rank.toString()] = i);
 export default class Card {
   public rankNumber: number = 0;
 
-  constructor(public suit: Suit, public rank: Rank) {
+  constructor(
+    public suit: Suit,
+    public rank: Rank,
+    public used: boolean = false,
+  ) {
     this.rankNumber = RankNumbers[rank.toString()];
   }
 
