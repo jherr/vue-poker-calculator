@@ -45,21 +45,24 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.rank {
-  font-size: x-small;
-}
 .card {
+  display: inline-block;
+  margin: 1px;
   width: 2em;
   height: 3.5em;
   border: 1.5px solid black;
   border-radius: 3px;
-  margin: 1px;
-  display: inline-block;
   text-align: center;
   opacity: 0.3;
+  margin-top: 0.5em;
+}
+
+.rank {
+  font-size: x-small;
 }
 
 .used {
   opacity: 1;
+  margin-top: 0em;
 }
 </style>

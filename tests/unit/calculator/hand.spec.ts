@@ -163,6 +163,20 @@ describe('Hand', () => {
         true, true, true, true, true,
       ]);
 
+      const lowStraight = new Hand([
+        new Card(Suit.Spades, Rank.Ace),
+        new Card(Suit.Spades, Rank.Two),
+        new Card(Suit.Spades, Rank.Three),
+        new Card(Suit.Spades, Rank.Four),
+        new Card(Suit.Spades, Rank.Five),
+      ]);
+      expect(lowStraight.match.hand).toBe(Hands.StraightFlush);
+      expect(lowStraight.match.ranks).toEqual([4]);
+      expect(lowStraight.match.rank).toBe(8);
+      expect(lowStraight.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, true,
+      ]);
+
       const hand2 = new Hand([
         new Card(Suit.Spades, Rank.Nine),
         new Card(Suit.Spades, Rank.Ten),
@@ -191,6 +205,20 @@ describe('Hand', () => {
       expect(hand.match.ranks).toEqual([12]);
       expect(hand.match.rank).toBe(4);
       expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, true,
+      ]);
+
+      const lowStraight = new Hand([
+        new Card(Suit.Spades, Rank.Ace),
+        new Card(Suit.Spades, Rank.Two),
+        new Card(Suit.Clubs, Rank.Three),
+        new Card(Suit.Spades, Rank.Four),
+        new Card(Suit.Spades, Rank.Five),
+      ]);
+      expect(lowStraight.match.hand).toBe(Hands.Straight);
+      expect(lowStraight.match.ranks).toEqual([4]);
+      expect(lowStraight.match.rank).toBe(4);
+      expect(lowStraight.cards.map((c) => c.used)).toEqual([
         true, true, true, true, true,
       ]);
 

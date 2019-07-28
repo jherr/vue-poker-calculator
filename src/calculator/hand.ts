@@ -149,7 +149,8 @@ export default class Hand {
     }
     this.cards.forEach((card) => {
       const adjustedNumber =
-        card.rankNumber === 0 ? RankNumbers[Rank.AceHigh] : card.rankNumber;
+        card.rankNumber === 0 && this.straightEnd >= RankNumbers[Rank.AceHigh] ?
+          RankNumbers[Rank.AceHigh] : card.rankNumber;
       if (
         adjustedNumber > this.straightEnd - 5 &&
         card.suit === this.suits[0]
@@ -288,7 +289,8 @@ export default class Hand {
     const usedRank: any = {};
     this.cards.forEach((card) => {
       const adjustedNumber =
-        card.rankNumber === 0 ? RankNumbers[Rank.AceHigh] : card.rankNumber;
+        card.rankNumber === 0 && this.straightEnd >= RankNumbers[Rank.AceHigh] ?
+          RankNumbers[Rank.AceHigh] : card.rankNumber;
       if (
         adjustedNumber >= (this.straightEnd - 4) &&
         adjustedNumber <= this.straightEnd &&
