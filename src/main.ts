@@ -8,6 +8,8 @@ Vue.use(Vuex);
 
 Vue.config.productionTip = false;
 
+Vue.filter('percent', (v: number) => `${Math.round(v)}%`);
+
 new Vue({
   store,
   vuetify,

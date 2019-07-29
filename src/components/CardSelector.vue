@@ -1,67 +1,66 @@
 <template>
-  <v-container grid-list-md>
-    <v-layout wrap>
-      <v-flex xs8>
-        <v-btn-toggle v-model="rank">
-          <v-btn text :value="Rank.Two">
-            2
-          </v-btn>
-          <v-btn text :value="Rank.Three">
-            3
-          </v-btn>
-          <v-btn text :value="Rank.Four">
-            4
-          </v-btn>
-          <v-btn text :value="Rank.Five">
-            5
-          </v-btn>
-          <v-btn text :value="Rank.Six">
-            6
-          </v-btn>
-          <v-btn text :value="Rank.Seven">
-            7
-          </v-btn>
-          <v-btn text :value="Rank.Eight">
-            8
-          </v-btn>
-          <v-btn text :value="Rank.Nine">
-            9
-          </v-btn>
-          <v-btn text :value="Rank.Ten">
-            10
-          </v-btn>
-          <v-btn text :value="Rank.Jack">
-            J
-          </v-btn>
-          <v-btn text :value="Rank.Queen">
-            Q
-          </v-btn>
-          <v-btn text :value="Rank.King">
-            K
-          </v-btn>
-          <v-btn text :value="Rank.Ace">
-            A
-          </v-btn>
-        </v-btn-toggle>
-      </v-flex>
-      <v-flex xs4>
-        <v-btn-toggle v-model="suit">
-          <v-btn text :value="Suit.Spades">
-            <v-icon>mdi-cards-spade</v-icon>
-          </v-btn>
-          <v-btn text :value="Suit.Hearts">
-            <v-icon>mdi-cards-heart</v-icon>
-          </v-btn>
-          <v-btn text :value="Suit.Clubs">
-            <v-icon>mdi-cards-club</v-icon>
-          </v-btn>
-          <v-btn text :value="Suit.Diamonds">
-            <v-icon>mdi-cards-diamond</v-icon>
-          </v-btn>
-        </v-btn-toggle>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <div class="selector">
+    <div>
+      <v-btn-toggle v-model="rank">
+        <v-btn text :value="Rank.Two" x-small>
+          2
+        </v-btn>
+        <v-btn text :value="Rank.Three" x-small>
+          3
+        </v-btn>
+        <v-btn text :value="Rank.Four" x-small>
+          4
+        </v-btn>
+        <v-btn text :value="Rank.Five" x-small>
+          5
+        </v-btn>
+        <v-btn text :value="Rank.Six" x-small>
+          6
+        </v-btn>
+        <v-btn text :value="Rank.Seven" x-small>
+          7
+        </v-btn>
+        <v-btn text :value="Rank.Eight" x-small>
+          8
+        </v-btn>
+        <v-btn text :value="Rank.Nine" x-small>
+          9
+        </v-btn>
+        <v-btn text :value="Rank.Ten" x-small>
+          10
+        </v-btn>
+        <v-btn text :value="Rank.Jack" x-small>
+          J
+        </v-btn>
+        <v-btn text :value="Rank.Queen" x-small>
+          Q
+        </v-btn>
+        <v-btn text :value="Rank.King" x-small>
+          K
+        </v-btn>
+        <v-btn text :value="Rank.Ace" x-small>
+          A
+        </v-btn>
+      </v-btn-toggle>
+    </div>
+
+    <div>
+      <v-btn-toggle v-model="suit">
+        <v-btn text :value="Suit.Spades" x-small>
+          <v-icon x-small>mdi-cards-spade</v-icon>
+        </v-btn>
+        <v-btn text :value="Suit.Hearts" x-small>
+          <v-icon x-small>mdi-cards-heart</v-icon>
+        </v-btn>
+        <v-btn text :value="Suit.Clubs" x-small>
+          <v-icon x-small>mdi-cards-club</v-icon>
+        </v-btn>
+        <v-btn text :value="Suit.Diamonds" x-small>
+          <v-icon x-small>mdi-cards-diamond</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -107,3 +106,9 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+.selector {
+  margin-bottom: 1em;
+}
+</style>
