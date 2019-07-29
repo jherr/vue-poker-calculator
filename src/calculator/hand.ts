@@ -15,8 +15,6 @@ export default class Hand {
   private rankCounts: any = {};
 
   constructor(public cards: Card[], public playerHand: boolean = false) {
-    this.high = this.cards[this.cards.length - 1].rankNumber;
-
     const suitsHash: any = {};
 
     const segments: Segment[] = [];
@@ -26,6 +24,7 @@ export default class Hand {
     const sortedCards = this.cards
       .slice()
       .sort((a, b) => a.rankNumber < b.rankNumber ? -1 : 1);
+    this.high = sortedCards[this.cards.length - 1].rankNumber;
     sortedCards.forEach((card) => {
       // Calculate straight segments
       if (card.rankNumber - end > 1) {
@@ -242,13 +241,14 @@ export default class Hand {
 
   private twoPairMatcher() {
     if (this.match.hand === Hands.HighCard) {
-      if (this.findRankCounts(2).length === 2) {
+      if (this.findRankCounts(2).length >= 2) {
+        const sortedRankCounts = sortRanks(this.findRankCounts(2));
         this.match = new MatchResult(Hands.TwoPair, [
-          ...sortRanks(this.findRankCounts(2)),
+          ...sortedRankCounts.slice(0, 2),
           ...this.findRankCounts(1).slice(0, 1),
         ]);
-        this.markUsedByRankNumber(this.findRankCounts(2)[0]);
-        this.markUsedByRankNumber(this.findRankCounts(2)[1]);
+        this.markUsedByRankNumber(sortedRankCounts[0]);
+        this.markUsedByRankNumber(sortedRankCounts[1]);
       }
     }
   }
@@ -303,8 +303,9 @@ export default class Hand {
   }
 
   private markUsedByRankNumber(rank: number) {
+    const adjustedRank = rank === RankNumbers[Rank.AceHigh] ? RankNumbers[Rank.Ace] : rank;
     this.cards.forEach((card) => {
-      if (card.rankNumber === rank) {
+      if (card.rankNumber === adjustedRank) {
         card.used = true;
       }
     });

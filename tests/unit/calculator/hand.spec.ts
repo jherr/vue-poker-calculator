@@ -304,6 +304,20 @@ describe('Hand', () => {
         true, true, false, false, false,
       ]);
 
+      const aceHand = new Hand([
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Spades, Rank.Ace),
+        new Card(Suit.Diamonds, Rank.King),
+        new Card(Suit.Clubs, Rank.Four),
+        new Card(Suit.Spades, Rank.Nine),
+      ]);
+      expect(aceHand.match.hand).toBe(Hands.Pair);
+      expect(aceHand.match.ranks).toEqual([13, 12, 8, 3]);
+      expect(aceHand.match.rank).toBe(1);
+      expect(aceHand.cards.map((c) => c.used)).toEqual([
+        true, true, false, false, false,
+      ]);
+
       const sevenCardPair = new Hand([
         new Card(Suit.Hearts, Rank.Ace),
         new Card(Suit.Spades, Rank.Ace),
@@ -335,6 +349,22 @@ describe('Hand', () => {
       expect(hand.cards.map((c) => c.used)).toEqual([
         true, true, true, true, false,
       ]);
+
+      const threePair = new Hand([
+        new Card(Suit.Hearts, Rank.Jack),
+        new Card(Suit.Spades, Rank.Jack),
+        new Card(Suit.Diamonds, Rank.King),
+        new Card(Suit.Clubs, Rank.King),
+        new Card(Suit.Diamonds, Rank.Ace),
+        new Card(Suit.Clubs, Rank.Ace),
+        new Card(Suit.Spades, Rank.Nine),
+      ]);
+      expect(threePair.match.hand).toBe(Hands.TwoPair);
+      expect(threePair.match.ranks).toEqual([13, 12, 8]);
+      expect(threePair.match.rank).toBe(2);
+      expect(threePair.cards.map((c) => c.used)).toEqual([
+        false, false, true, true, true, true, false,
+      ]);
     });
 
     it('should find four of a kind', () => {
@@ -351,6 +381,22 @@ describe('Hand', () => {
       expect(hand.match.ranks).toEqual([10, 8]);
       expect(hand.match.rank).toBe(7);
       expect(hand.cards.map((c) => c.used)).toEqual([
+        true, true, true, true, false, false, false,
+      ]);
+
+      const aceHand = new Hand([
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Spades, Rank.Ace),
+        new Card(Suit.Diamonds, Rank.Ace),
+        new Card(Suit.Clubs, Rank.Ace),
+        new Card(Suit.Spades, Rank.Nine),
+        new Card(Suit.Spades, Rank.Seven),
+        new Card(Suit.Spades, Rank.Two),
+      ]);
+      expect(aceHand.match.hand).toBe(Hands.FourOfAKind);
+      expect(aceHand.match.ranks).toEqual([13, 8]);
+      expect(aceHand.match.rank).toBe(7);
+      expect(aceHand.cards.map((c) => c.used)).toEqual([
         true, true, true, true, false, false, false,
       ]);
     });
@@ -373,17 +419,17 @@ describe('Hand', () => {
       ]);
 
       const hand2 = new Hand([
-        new Card(Suit.Hearts, Rank.Jack),
-        new Card(Suit.Spades, Rank.Jack),
-        new Card(Suit.Diamonds, Rank.Jack),
+        new Card(Suit.Hearts, Rank.Ace),
+        new Card(Suit.Spades, Rank.Ace),
+        new Card(Suit.Diamonds, Rank.Ace),
         new Card(Suit.Spades, Rank.Nine),
         new Card(Suit.Clubs, Rank.Ten),
       ]);
       expect(hand2.match.hand).toBe(Hands.ThreeOfAKind);
-      expect(hand2.match.ranks).toEqual([10, 9, 8]);
+      expect(hand2.match.ranks).toEqual([13, 9, 8]);
       expect(hand2.match.rank).toBe(3);
       expect(hand2.toString()).toBe(
-        'Three of a kind: Jack of Hearts,Jack of Spades,Jack of Diamonds,9 of Spades,10 of Clubs',
+        'Three of a kind: Ace of Hearts,Ace of Spades,Ace of Diamonds,9 of Spades,10 of Clubs',
       );
       expect(hand2.cards.map((c) => c.used)).toEqual([
         true, true, true, false, false,
