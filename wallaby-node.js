@@ -13,7 +13,8 @@ module.exports = wallaby => {
     preprocessors: {
       '**/*.js?(x)': file => require('@babel/core').transform(
         file.content,
-        {sourceMap: true, compact: false, filename: file.path, plugins: ['babel-plugin-jest-hoist']})
+        {sourceMap: true, compact: false, filename: file.path, plugins: ['babel-plugin-jest-hoist']}),
+      '**/*.vue': file => require('vue-jest').process(file.content, file.path)
     },
 
     setup(wallaby) {
