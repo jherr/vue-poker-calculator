@@ -1,5 +1,5 @@
 <template>
-  <div :class="`card ${card.used ? 'used' : ''}`">
+  <div :class="`card ${card.used || active ? 'used' : ''}`">
     <span class="rank">{{RankMap[card.rank]}}</span>
     <v-icon>
       {{SuitMap[card.suit]}}
@@ -36,7 +36,7 @@ const RankMap: any = {
 
 export default Vue.extend({
   name: 'SmallCard',
-  props: ['card'],
+  props: ['card', 'active'],
   data: () => ({
     SuitMap,
     RankMap,
@@ -55,6 +55,7 @@ export default Vue.extend({
   text-align: center;
   opacity: 0.3;
   margin-top: 0.5em;
+  background: white;
 }
 
 .rank {

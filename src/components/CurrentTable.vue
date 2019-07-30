@@ -6,6 +6,7 @@
         v-for="(card, index) in community"
         :key="index"
         :card="card"
+        :active="true"
       />
     </div>
     <h3>Hands</h3>

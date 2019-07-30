@@ -34,25 +34,47 @@
             </v-container>
           </v-flex>
           <v-flex lg6>
-            <WinStatistics />
+            <v-tabs>
+              <v-tab key="overall">
+                Overall
+              </v-tab>
+              <v-tab key="wins">
+                Wins
+              </v-tab>
+              <v-tab key="losses">
+                Losses
+              </v-tab>
+              <v-tab key="last">
+                Last Hand
+              </v-tab>
 
-            <v-card
-              class="mx-auto"
-            >
-              <v-card-title>Wins with</v-card-title>
-              <HandPerformance
-                :hands="statistics.winsWith"
-                :total="statistics.wins"
-              />
-            </v-card>
-
-            <h2>Loses To</h2>
-            <HandPerformance
-              :hands="statistics.losesTo"
-              :total="statistics.totalCount - statistics.wins"
-            />
-
-            <CurrentTable />
+              <v-tab-item key="overall">
+                <WinStatistics />
+              </v-tab-item>
+              <v-tab-item key="wins">
+                <v-subheader>
+                  You win {{(statistics.wins / statistics.totalCount) * 100.0 | percent}} of the time and
+                  these are the winning hands
+                </v-subheader>
+                <HandPerformance
+                  :hands="statistics.winsWith"
+                  :total="statistics.wins"
+                />
+              </v-tab-item>
+              <v-tab-item key="losses">
+                <v-subheader>
+                  You lose {{((statistics.totalCount - statistics.wins) / statistics.totalCount) * 100.0 | percent}} of the time
+                  and these are the hands you lose to
+                </v-subheader>
+                <HandPerformance
+                  :hands="statistics.losesTo"
+                  :total="statistics.totalCount - statistics.wins"
+                />
+              </v-tab-item>
+              <v-tab-item key="last">
+                <CurrentTable />
+              </v-tab-item>
+            </v-tabs>
           </v-flex>
         </v-layout>
       </v-container>
@@ -89,13 +111,10 @@ export default Vue.extend({
   },
   methods: {
     onPlay() {
-      this.$store.commit('setPlaying', true);
+      this.$store.dispatch('startSimulation');
     },
     onStop() {
       this.$store.commit('setPlaying', false);
-    },
-    safePercent(count: number, total: number) {
-      return total > 0 ? count / total : 0;
     },
   },
 });

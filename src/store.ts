@@ -92,12 +92,18 @@ const store = new Vuex.Store({
       state.playing = playing;
     },
   },
+  actions: {
+    runSimulation({ state, commit, dispatch }) {
+      if (state.playing) {
+        commit('setupTable');
+        window.setTimeout(() => dispatch('runSimulation'), 100);
+      }
+    },
+    startSimulation({ commit, dispatch }) {
+      commit('setPlaying', true);
+      dispatch('runSimulation');
+    },
+  },
 });
-
-window.setInterval(() => {
-  if (store.state.playing) {
-    store.commit('setupTable');
-  }
-}, 200);
 
 export default store;

@@ -36,11 +36,10 @@ export default Vue.extend({
 <style scoped>
 .player {
   padding: 2px;
-  border: 1px solid #999;
+  background: lightblue;
 }
 .cpu {
   padding: 2px;
-  border: 1px solid white;
 }
 .hand {
   font-weight: bold;

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>{{statistics.totalCount}} Hands Played</h2>
     <v-container grid-list-md>
       <v-layout row>
         <v-flex sm4 class="column">
@@ -50,11 +49,13 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <h4>{{statistics.totalCount}} Hands Played</h4>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
+
 export default Vue.extend({
   computed: {
     statistics: {
