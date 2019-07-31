@@ -1,3 +1,4 @@
+/* tslint:disable no-console */
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Vuetify from 'vuetify';
@@ -6,7 +7,11 @@ import CardSelector from '@/components/CardSelector.vue';
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
+
+const spy = jest.fn();
+console.error = spy;
 localVue.use(Vuetify);
+spy.mockRestore();
 
 describe('CardSelector.vue', () => {
   let store: any;
