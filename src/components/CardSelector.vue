@@ -1,65 +1,17 @@
 <template>
   <div class="selector">
-    <div>
-      <v-btn-toggle v-model="rank">
-        <v-btn text :value="Rank.Two" x-small>
-          2
-        </v-btn>
-        <v-btn text :value="Rank.Three" x-small>
-          3
-        </v-btn>
-        <v-btn text :value="Rank.Four" x-small>
-          4
-        </v-btn>
-        <v-btn text :value="Rank.Five" x-small>
-          5
-        </v-btn>
-        <v-btn text :value="Rank.Six" x-small>
-          6
-        </v-btn>
-        <v-btn text :value="Rank.Seven" x-small>
-          7
-        </v-btn>
-        <v-btn text :value="Rank.Eight" x-small>
-          8
-        </v-btn>
-        <v-btn text :value="Rank.Nine" x-small>
-          9
-        </v-btn>
-        <v-btn text :value="Rank.Ten" x-small>
-          10
-        </v-btn>
-        <v-btn text :value="Rank.Jack" x-small>
-          J
-        </v-btn>
-        <v-btn text :value="Rank.Queen" x-small>
-          Q
-        </v-btn>
-        <v-btn text :value="Rank.King" x-small>
-          K
-        </v-btn>
-        <v-btn text :value="Rank.Ace" x-small>
-          A
-        </v-btn>
-      </v-btn-toggle>
-    </div>
-
-    <div>
-      <v-btn-toggle v-model="suit">
-        <v-btn text :value="Suit.Spades" x-small>
-          <v-icon x-small>mdi-cards-spade</v-icon>
-        </v-btn>
-        <v-btn text :value="Suit.Hearts" x-small>
-          <v-icon x-small>mdi-cards-heart</v-icon>
-        </v-btn>
-        <v-btn text :value="Suit.Clubs" x-small>
-          <v-icon x-small>mdi-cards-club</v-icon>
-        </v-btn>
-        <v-btn text :value="Suit.Diamonds" x-small>
-          <v-icon x-small>mdi-cards-diamond</v-icon>
-        </v-btn>
-      </v-btn-toggle>
-    </div>
+    <v-select
+      :items="[Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Six,
+      Rank.Seven, Rank.Eight, Rank.Nine, Rank.Ten, Rank.Jack, Rank.Queen,
+      Rank.King, Rank.Ace]"
+      :label="`Rank for card #${index + 1}`"
+      v-model="rank"
+    ></v-select>
+    <v-select
+      :items="[Suit.Spades, Suit.Hearts, Suit.Diamonds, Suit.Clubs]"
+      :label="`Suit for card #${index + 1}`"
+      v-model="suit"
+    ></v-select>
   </div>
 </template>
 

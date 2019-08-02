@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h3>Community Cards</h3>
     <div>
       <SmallCard
@@ -45,3 +45,9 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+.container {
+  margin-left: 0.5em;
+}
+</style>

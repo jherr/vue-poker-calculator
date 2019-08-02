@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <v-app-bar app>
+    <v-app-bar app dark>
       <v-toolbar-title class="headline text-uppercase">
-        <span class="font-weight-light">Poker Simulator</span>
+        <span class="font-weight-light">Poker <strong>Simulator</strong></span>
       </v-toolbar-title>
     </v-app-bar>
 
@@ -10,30 +10,17 @@
       <v-container>
         <v-layout row>
           <v-flex lg6>
-            <h2>Cards</h2>
-            <CardSelector :index="0" />
-            <CardSelector :index="1" />
-            <h2>Players</h2>
-            <PlayerCount />
-
-            <v-container grid-list-md>
-              <v-layout row>
-                <v-flex sm6>
-                  <v-btn color="primary" @click="onPlay" :disabled="playing" block>
-                    <v-icon>mdi-play</v-icon>
-                    Start Simulation
-                  </v-btn>
-                </v-flex>
-                <v-flex sm6>
-                  <v-btn color="error" @click="onStop" :disabled="!playing" block>
-                    <v-icon>mdi-stop</v-icon>
-                    Stop Simulation
-                  </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-container>
+            <div class="controls">
+              <CardSelector :index="0" />
+              <CardSelector :index="1" />
+              <PlayerCount />
+            </div>
           </v-flex>
           <v-flex lg6>
+            <v-progress-linear
+              :value="statistics.progress"
+              v-if="statistics.progress < 100.0"
+            />
             <v-tabs>
               <v-tab key="overall">
                 Overall
@@ -119,3 +106,10 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+.controls {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+</style>

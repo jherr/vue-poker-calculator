@@ -4,52 +4,48 @@
       <v-layout row>
         <v-flex sm4 class="column">
           <div>
-            Win after flop
+            Wins after flop
           </div>
           <div>
             <v-progress-circular
               :value="(statistics.winsAfterFlop / statistics.totalCount) * 100.0"
               :size="100"
-              :width="30"
-            />
-          </div>
-          <div>
-            {{(statistics.winsAfterFlop / statistics.totalCount) * 100.0 | percent}}
+              :width="20"
+            >
+              {{(statistics.winsAfterFlop / statistics.totalCount) * 100.0 | percent}}
+            </v-progress-circular>
           </div>
         </v-flex>
         <v-flex sm4 class="column">
           <div>
-            Win after turn
+            Wins after turn
           </div>
           <div>
             <v-progress-circular
               :value="(statistics.winsAfterTurn / statistics.totalCount) * 100.0"
               :size="100"
-              :width="30"
-            />
-          </div>
-          <div>
-            {{(statistics.winsAfterTurn / statistics.totalCount) * 100.0 | percent}}
+              :width="20"
+            >
+              {{(statistics.winsAfterTurn / statistics.totalCount) * 100.0 | percent}}
+            </v-progress-circular>
           </div>
         </v-flex>
         <v-flex sm4 class="column">
           <div>
-            Win after river
+            Wins after river
           </div>
           <div>
             <v-progress-circular
               :value="(statistics.wins / statistics.totalCount) * 100.0"
               :size="100"
-              :width="30"
-            />
-          </div>
-          <div>
-            {{(statistics.wins / statistics.totalCount) * 100.0 | percent}}
+              :width="20"
+            >
+              {{(statistics.wins / statistics.totalCount) * 100.0 | percent}}
+            </v-progress-circular>
           </div>
         </v-flex>
       </v-layout>
     </v-container>
-    <h4>{{statistics.totalCount}} Hands Played</h4>
   </div>
 </template>
 

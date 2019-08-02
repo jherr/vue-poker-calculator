@@ -6,6 +6,8 @@ import Table from '@/calculator/table';
 
 Vue.use(Vuex);
 
+const MAX_HANDS: number = 20000;
+
 const startingCards = [
   new Card(Suit.Clubs, Rank.Ace),
   new Card(Suit.Hearts, Rank.Ace),
@@ -14,6 +16,7 @@ const firstTable = new Table(startingCards);
 
 interface Statistics {
   totalCount: number;
+  progress: number;
   wins: number;
   winsAfterTurn: number;
   winsAfterFlop: number;
@@ -23,6 +26,7 @@ interface Statistics {
 
 const updateStatistics = (table: Table, stats: Statistics) => {
   stats.totalCount += 1;
+  stats.progress = Math.round((stats.totalCount / MAX_HANDS) * 100.0);
   stats.wins += table.won ? 1 : 0;
   stats.winsAfterFlop += table.wonAfterFlop ? 1 : 0;
   stats.winsAfterTurn += table.wonAfterTurn ? 1 : 0;
@@ -35,6 +39,7 @@ const updateStatistics = (table: Table, stats: Statistics) => {
 
 const resetStatistics = (table: Table): Statistics => {
   const stats: Statistics = {
+    progress: 0.0,
     totalCount: 1,
     wins: firstTable.won ? 1 : 0,
     winsAfterFlop: firstTable.wonAfterFlop ? 1 : 0,
@@ -94,7 +99,7 @@ const store = new Vuex.Store({
   },
   actions: {
     runSimulation({ state, commit, dispatch }) {
-      if (state.playing) {
+      if (state.playing && state.statistics.totalCount < MAX_HANDS) {
         commit('setupTable');
         window.setTimeout(() => dispatch('runSimulation'), 100);
       }
@@ -105,5 +110,7 @@ const store = new Vuex.Store({
     },
   },
 });
+
+store.dispatch('startSimulation');
 
 export default store;

@@ -1,5 +1,5 @@
 /* tslint:disable no-console */
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Vuetify from 'vuetify';
 
@@ -30,7 +30,7 @@ describe('CardSelector.vue', () => {
 
   it('renders a card selector', () => {
     const msg = 'new message';
-    const wrapper = shallowMount(CardSelector, {
+    const wrapper = mount(CardSelector, {
       propsData: {
         index: 0,
       },
