@@ -58,7 +58,6 @@ interface StoreState {
   cards: Card[];
   table: Table;
   statistics: Statistics;
-  playing: boolean;
   playerCount: number;
 }
 
@@ -67,17 +66,18 @@ const store = new Vuex.Store({
     cards: startingCards,
     table: firstTable,
     statistics: resetStatistics(firstTable),
-    playing: false,
     playerCount: 9,
   },
   mutations: {
     setCard(state: StoreState, { index, card }) {
       state.cards[index] = card;
+
       state.table = new Table(state.cards, state.playerCount);
       state.statistics = resetStatistics(state.table);
     },
     setPlayerCount(state: StoreState, count: number) {
       state.playerCount = count;
+
       state.table = new Table(state.cards, state.playerCount);
       state.statistics = resetStatistics(state.table);
     },
@@ -93,19 +93,15 @@ const store = new Vuex.Store({
       state.table = table;
       state.statistics = statistics;
     },
-    setPlaying(state: StoreState, playing: boolean) {
-      state.playing = playing;
-    },
   },
   actions: {
     runSimulation({ state, commit, dispatch }) {
-      if (state.playing && state.statistics.totalCount < MAX_HANDS) {
+      if (state.statistics.totalCount < MAX_HANDS) {
         commit('setupTable');
-        window.setTimeout(() => dispatch('runSimulation'), 100);
       }
+      window.setTimeout(() => dispatch('runSimulation'), 100);
     },
     startSimulation({ commit, dispatch }) {
-      commit('setPlaying', true);
       dispatch('runSimulation');
     },
   },
