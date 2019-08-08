@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h3>Community Cards</h3>
+    <h3>{{ $t('communityCards') }}</h3>
     <div>
       <SmallCard
         v-for="(card, index) in community"
@@ -9,7 +9,7 @@
         :active="true"
       />
     </div>
-    <h3>Hands</h3>
+    <h3>{{ $t('hands') }}</h3>
     <HandRow
       v-for="(hand, index) in hands"
       :key="index"

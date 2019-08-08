@@ -4,7 +4,7 @@
       <v-layout row>
         <v-flex sm4 class="column">
           <div>
-            Wins after flop
+            {{ $t('winsAfterFlop') }}
           </div>
           <div>
             <v-progress-circular
@@ -18,7 +18,7 @@
         </v-flex>
         <v-flex sm4 class="column">
           <div>
-            Wins after turn
+            {{ $t('winsAfterTurn') }}
           </div>
           <div>
             <v-progress-circular
@@ -32,7 +32,7 @@
         </v-flex>
         <v-flex sm4 class="column">
           <div>
-            Wins after river
+            {{ $t('winsAfterRiver') }}
           </div>
           <div>
             <v-progress-circular

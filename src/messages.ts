@@ -1,0 +1,20 @@
+export default {
+  en: {
+    poker: 'Poker',
+    simulator: 'Simulator',
+    overall: 'Overall',
+    wins: 'Wins',
+    losses: 'Losses',
+    lastHand: 'Last Hand',
+    winsReport: 'You win {percent} of the time and these are the winning hands',
+    lossesReport: 'You lose {percent} of the time and these are the hands you lose to',
+    rankLabel: 'Rank for card #{index}',
+    suitLabel: 'Suit for card #{index}',
+    communityCards: 'Community Cards',
+    hands: 'Hands',
+    numberOfPlayers: 'Number of Players',
+    winsAfterFlop: 'Wins After Flop',
+    winsAfterTurn: 'Wins After Turn',
+    winsAfterRiver: 'Wins After River',
+  },
+};

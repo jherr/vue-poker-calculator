@@ -1,7 +1,7 @@
 <template>
   <v-select
     :items="[2, 3, 4, 5, 6, 7, 8, 9]"
-    label="Number of players"
+    :label="$t('numberOfPlayers')"
     v-model="count"
   ></v-select>
 </template>

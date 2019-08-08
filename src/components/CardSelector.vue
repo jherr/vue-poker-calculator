@@ -4,12 +4,12 @@
       :items="[Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Six,
       Rank.Seven, Rank.Eight, Rank.Nine, Rank.Ten, Rank.Jack, Rank.Queen,
       Rank.King, Rank.Ace]"
-      :label="`Rank for card #${index + 1}`"
+      :label="$t('rankLabel', { index: index + 1 })"
       v-model="rank"
     ></v-select>
     <v-select
       :items="[Suit.Spades, Suit.Hearts, Suit.Diamonds, Suit.Clubs]"
-      :label="`Suit for card #${index + 1}`"
+      :label="$t('suitLabel', { index: index + 1 })"
       v-model="suit"
     ></v-select>
   </div>

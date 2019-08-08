@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app dark>
       <v-toolbar-title class="headline text-uppercase">
-        <span class="font-weight-light">Poker <strong>Simulator</strong></span>
+        <span class="font-weight-light">{{ $t('poker') }} <strong>{{ $t('simulator') }}</strong></span>
       </v-toolbar-title>
     </v-app-bar>
 
@@ -23,16 +23,16 @@
             />
             <v-tabs>
               <v-tab key="overall">
-                Overall
+                {{ $t('overall') }}
               </v-tab>
               <v-tab key="wins">
-                Wins
+                {{ $t('wins') }}
               </v-tab>
               <v-tab key="losses">
-                Losses
+                {{ $t('losses') }}
               </v-tab>
               <v-tab key="last">
-                Last Hand
+                {{ $t('lastHand') }}
               </v-tab>
 
               <v-tab-item key="overall">
@@ -40,8 +40,9 @@
               </v-tab-item>
               <v-tab-item key="wins">
                 <v-subheader>
-                  You win {{(statistics.wins / statistics.totalCount) * 100.0 | percent}} of the time and
-                  these are the winning hands
+                  {{ $t('winsReport', {
+                    percent: this.$options.filters.percent((statistics.wins / statistics.totalCount) * 100.0),
+                  }) }}
                 </v-subheader>
                 <HandPerformance
                   :hands="statistics.winsWith"
@@ -50,8 +51,9 @@
               </v-tab-item>
               <v-tab-item key="losses">
                 <v-subheader>
-                  You lose {{((statistics.totalCount - statistics.wins) / statistics.totalCount) * 100.0 | percent}} of the time
-                  and these are the hands you lose to
+                  {{ $t('lossesReport', {
+                    percent: this.$options.filters.percent(((statistics.totalCount - statistics.wins) / statistics.totalCount) * 100.0),
+                  }) }}
                 </v-subheader>
                 <HandPerformance
                   :hands="statistics.losesTo"
