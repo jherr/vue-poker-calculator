@@ -16,6 +16,7 @@
               <PlayerCount />
             </div>
           </v-flex>
+
           <v-flex lg6>
             <v-progress-linear
               :value="statistics.progress"
@@ -93,17 +94,6 @@ export default Vue.extend({
       get(): any {
         return this.$store.state.statistics;
       },
-    },
-    playing() {
-      return this.$store.state.playing;
-    },
-  },
-  methods: {
-    onPlay() {
-      this.$store.dispatch('startSimulation');
-    },
-    onStop() {
-      this.$store.commit('setPlaying', false);
     },
   },
 });

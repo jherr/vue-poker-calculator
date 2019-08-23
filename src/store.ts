@@ -101,12 +101,9 @@ const store = new Vuex.Store({
       }
       window.setTimeout(() => dispatch('runSimulation'), 100);
     },
-    startSimulation({ commit, dispatch }) {
-      dispatch('runSimulation');
-    },
   },
 });
 
-store.dispatch('startSimulation');
+store.dispatch('runSimulation');
 
 export default store;

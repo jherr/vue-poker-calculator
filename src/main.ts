@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
 import VueI18n from 'vue-i18n';
 
 import App from './App.vue';
@@ -8,7 +7,6 @@ import vuetify from './plugins/vuetify';
 import messages from './messages';
 
 Vue.use(VueI18n);
-Vue.use(Vuex);
 
 Vue.config.productionTip = false;
 
